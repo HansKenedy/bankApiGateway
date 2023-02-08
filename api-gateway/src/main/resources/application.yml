@@ -1,0 +1,34 @@
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+server:
+  port: 8080
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      default-filters:
+        - name: SCGWGlobalFilter
+      routes:
+        - id: service-customer
+          uri: lb://service-client
+          predicates:
+            - Path=/v1/client/**
+          filters:
+            - name: SCGWPreFilter
+            - name: SCGWPostFilter
+        - id: service-product
+          uri: lb://service-product
+          predicates:
+            - Path=/v1/AccountActive/**
+          filters:
+            - name: SCGWPreFilter
+            - name: SCGWPostFilter
+      discovery:
+        locator:
+          enabled: true
+    loadbalancer:
+      ribbon:
+        enabled: false
+
